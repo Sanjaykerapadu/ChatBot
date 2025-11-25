@@ -1,5 +1,3 @@
-import ChatWidget from "./components/chatbot";
-
 export default function RootLayout({
   children,
 }: {
@@ -9,7 +7,6 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {children}
-        <ChatWidget />
       </body>
     </html>
   );
