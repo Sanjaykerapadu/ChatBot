@@ -14,32 +14,26 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
   const [input, setInput] = useState("");
 
-  const sendMessage = () => {
+ const sendMessage = async () => {
   if (!input.trim()) return;
 
-  const userMessage: Message = { from: "user", text: input };
-
-  setMessages([...messages, userMessage]);
+  const userMessage = { from: "user", text: input };
+  setMessages((m) => [...m, userMessage]);
   setInput("");
 
-  const reply = generateReply(input);
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: input }), // ✅ IMPORTANT
+  });
 
-  setTimeout(() => {
-    setMessages((m) => [...m, { from: "bot", text: reply }]);
-  }, 500);
+  const data = await res.json();
+
+  setMessages((m) => [
+    ...m,
+    { from: "bot", text: data.reply },
+  ]);
 };
-
-
-  const generateReply = (text: string) => {
-    text = text.toLowerCase();
-    if (text.includes("hi") || text.includes("hello"))
-      return "Hello! 😊 How can I assist you?";
-    if (text.includes("course"))
-      return "You can enroll in any course from the dashboard.";
-    if (text.includes("help"))
-      return "Sure! Tell me what issue you're facing.";
-    return "I'm not sure about that yet, but I’m learning!";
-  };
 
   return (
     <div className="fixed bottom-24 right-6 bg-white w-80 shadow-xl rounded-xl border border-gray-200 flex flex-col">
