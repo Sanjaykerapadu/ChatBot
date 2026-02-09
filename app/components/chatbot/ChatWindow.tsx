@@ -13,18 +13,27 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   ]);
 
   const [input, setInput] = useState("");
+  const userMessage: Message = {
+  from: "user",
+  text: input,
+};
 
- const sendMessage = async () => {
+
+const sendMessage = async () => {
   if (!input.trim()) return;
 
-  const userMessage = { from: "user", text: input };
+  const userMessage: Message = {
+    from: "user",
+    text: input,
+  };
+
   setMessages((m) => [...m, userMessage]);
   setInput("");
 
   const res = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: input }), // ✅ IMPORTANT
+    body: JSON.stringify({ query: input }),
   });
 
   const data = await res.json();
@@ -34,6 +43,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     { from: "bot", text: data.reply },
   ]);
 };
+
 
   return (
     <div className="fixed bottom-24 right-6 bg-white w-80 shadow-xl rounded-xl border border-gray-200 flex flex-col">
